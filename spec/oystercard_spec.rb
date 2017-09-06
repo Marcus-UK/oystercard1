@@ -1,7 +1,7 @@
 require 'oystercard'
 describe Oystercard do
   subject(:oystercard) { described_class.new }
-  let(:station) {double :entry_station}
+  let(:station) { double :entry_station }
   it 'has a balance of zero' do
     expect(oystercard.balance).to eq(0)
   end
@@ -10,18 +10,17 @@ describe Oystercard do
     it { is_expected.to respond_to(:top_up).with(1).argument }
 
     it 'tops up by amount given' do
-      expect{ oystercard.top_up 1 }.to change{ oystercard.balance }.by 1
-      end
+      expect { oystercard.top_up 1 }.to change { oystercard.balance }.by 1
+    end
     it 'raises an error when over max amount' do
       card_limit = Oystercard::CARD_LIMIT
       oystercard.top_up(card_limit)
-       expect { oystercard.top_up 1 }.to raise_error 'Oystercard maximum balance of £90 exceeded'
+      expect { oystercard.top_up 1 }.to raise_error 'Oystercard maximum balance of £90 exceeded'
     end
   end
 
-
   describe '# in_journey?' do
-    it { is_expected.to respond_to(:in_journey?)}
+    it { is_expected.to respond_to(:in_journey?) }
 
     it ' is expected to return false at start' do
       expect(oystercard.in_journey?).to eq false
@@ -50,21 +49,28 @@ describe Oystercard do
     it 'should make in_journey equal false' do
       oystercard.top_up(Oystercard::MINIMUM)
       oystercard.touch_in(station)
-      oystercard.touch_out
+      oystercard.touch_out(station)
       expect(oystercard.in_journey?).to eq false
     end
 
     it 'should deduct the minimum fare' do
-        oystercard.top_up(Oystercard::MINIMUM)
-        expect{ oystercard.touch_out }.to change{ oystercard.balance }.by(-Oystercard::MINIMUM)
+      oystercard.top_up(Oystercard::MINIMUM)
+      expect { oystercard.touch_out(station) }.to change { oystercard.balance }.by(-Oystercard::MINIMUM)
     end
 
     it 'Should change entry station to nil' do
       oystercard.top_up(Oystercard::MINIMUM)
       oystercard.touch_in(station)
-      oystercard.touch_out
+      oystercard.touch_out(station)
       expect(oystercard.entry_station).to eq nil
     end
 
+    it 'Should add stations to # journeys' do
+      oystercard.top_up(Oystercard::MINIMUM)
+      oystercard.touch_in(station)
+      oystercard.touch_out(station)
+      journey = { station => station }
+      expect(oystercard.journeys).to include journey
+    end
   end
 end
