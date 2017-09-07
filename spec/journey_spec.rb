@@ -1,10 +1,10 @@
 require 'journey'
 
 describe Journey do
-  subject(:journey) {described_class.new}
-  let(:station) {double :station}
+  subject(:journey) { described_class.new }
+  let(:station) { double :station }
   describe '# in_journey?' do
-    it { is_expected.to respond_to(:in_journey?)}
+    it { is_expected.to respond_to(:in_journey?) }
 
     it ' is expected to return false at start' do
       expect(journey.in_journey?).to eq false
